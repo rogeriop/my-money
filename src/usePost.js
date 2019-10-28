@@ -3,21 +3,21 @@ import axios from 'axios'
 
 
 const reducer = (state, action) => {
-    if(action.type === 'REQUEST') {
-      return {
-        ...state, // tras tudo dentro de state e substitui só o abaixo
-        loading: true
-      }
+  if(action.type === 'REQUEST') {
+    return {
+      ...state, // tras tudo dentro de state e substitui só o abaixo
+      loading: true
     }
-    if(action.type === 'SUCCESS'){
-      return {
-        ...state,
-        loading: false,
-        data: action.data
-      }
-    }
-    return state
   }
+  if(action.type === 'SUCCESS'){
+    return {
+      ...state,
+      loading: false,
+      data: action.data
+    }
+  }
+  return state
+}
 
 const usePost = (url) => {
     const [data, dispatch] = useReducer(reducer, {
