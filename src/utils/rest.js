@@ -3,7 +3,8 @@ import axios from 'axios'
 
 const INITIAL_STATE = {
     loading: false,
-    data: {}
+    data: {},
+    error: ''
 }
 
 const reducer = (state, action) => {
@@ -20,15 +21,26 @@ const reducer = (state, action) => {
         data: action.data
       }
     }
+    if(action.type === 'FAILURE'){
+        return {
+          ...state,
+          loading: false,
+          error: action.error
+        }
+      }
     return state
   }
   const init = baseURL => {
     const useGet = resource => {
         const [data, dispatch] = useReducer(reducer, INITIAL_STATE)
         const carregar = async() => {
-            dispatch ({ type: 'REQUEST' })
-            const res = await axios.get(baseURL + resource + '.json')
-            dispatch({ type: 'SUCCESS', data: res.data })
+            try{
+                dispatch ({ type: 'REQUEST' })
+                const res = await axios.get(baseURL + resource + '.json')
+                dispatch({ type: 'SUCCESS', data: res.data })
+            }catch(err){
+                dispatch({ type: 'FAILURE', error: 'error loading data' })
+            }
         }
         useEffect(() => {
             carregar()
@@ -94,12 +106,20 @@ const usePatch = () => {
 
     const post = async(data) => {
         dispatch({ type: 'REQUEST' })
-        const res = await axios.post(resource, data)
-        dispatch({
-            type: 'SUCCESS',
-            data: res.data
-        })
-        return res.data
+        try {
+            const res = await axios.post(resource, data)
+            dispatch({
+                type: 'SUCCESS',
+                data: res.data
+            })
+            return res.data
+        }catch(err) {
+            console.log(err)
+            dispatch({
+                type: 'FAILURE',
+                data: 'signin error'
+            })
+        }
     }
     return [data, post]
 }
