@@ -1,4 +1,5 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
 import { useState } from 'react'
 import Rest from '../utils/rest'
 
@@ -50,6 +51,9 @@ const Movimentacoes = ( { match }) => {
       patch(`meses/${match.params.data}`, { previsao_saida: evt.target.value })
     }
 
+    if(data.error === 'Permission denied'){
+      return <Redirect to='/login' />
+    }
     return (
       <div className='container'>
         <h1>Movimentações</h1>
