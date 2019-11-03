@@ -1,22 +1,33 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Redirect } from 'react-router-dom'
 import { usePost } from '../utils/rest'
 
 const url ='https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyANzL0nPPdxK9FwQaKKzaxfXwkhe8fYGz8'
 
 const Login = () => {
     const [postData, signin] = usePost(url)
+    const [logado, setLogado] = useState(false)
     useEffect(() => {
         if(Object.keys(postData.data).length > 0) {
             localStorage.setItem('token', postData.data.idToken)
-            //console.log('logou', postData.data.idToken)
+            window.location.reload()
         }
     }, [postData])
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if(token) {
+            setLogado(true)
+        }
+    })
     const login = async() => {
         await signin ({
             email: 'pinheiroxrogerio@gmail.com',
-            password: 'aguia009',
+            password: 'aguia00',
             returnSecureToken: true
         })
+    }
+    if(logado) {
+        return <Redirect to='/' />
     }
     return(
         <div>
