@@ -7,6 +7,8 @@ const url ='https://identitytoolkit.googleapis.com/v1/accounts:signInWithPasswor
 const Login = () => {
     const [postData, signin] = usePost(url)
     const [logado, setLogado] = useState(false)
+    const [email, setEmail] = useState('')
+    const [senha, setSenha] = useState('')
     useEffect(() => {
         if(Object.keys(postData.data).length > 0) {
             localStorage.setItem('token', postData.data.idToken)
@@ -21,18 +23,30 @@ const Login = () => {
     })
     const login = async() => {
         await signin ({
-            email: 'pinheiroxrogerio@gmail.com',
-            password: 'aguia00',
+            email,
+            password: senha,
             returnSecureToken: true
         })
+    }
+    const onChangeEmail = evt => {
+        setEmail(evt.target.value)
+    }
+    const onChangeSenha = evt => {
+        setSenha(evt.target.value)
     }
     if(logado) {
         return <Redirect to='/' />
     }
     return(
         <div>
+            {
+                postData.error && postData.error.length > 0 &&
+                <p>E-mail e/ou senha inválidos.</p>
+            }
             <h1>Login</h1>
             {JSON.stringify(postData)}
+            <input type='text' value={email} onChange={onChangeEmail} placeholder='Seu e-mail' />
+            <input type='text' value={senha} onChange={onChangeSenha} placeholder='Sua senha' />
             <button onClick={login}>Login</button>
         </div>
     )
